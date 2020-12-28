@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AdminProperty {% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Update Property </h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-dark">Update</button>
+    {{ form_end(form) }}
+</div>
+{% endblock %}
