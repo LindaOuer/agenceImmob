@@ -5,6 +5,13 @@
 {% block body %}
 <div class="container">
     <h1>Gerer les properties</h1>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            {{ message }}
+        </div>
+    {% endfor %}
+
     <table class="table table-stripped">
         <thead>
             <tr>
@@ -16,10 +23,22 @@
             {% for p in properties %}
                 <tr>
                     <td>{{ p.title }} </td>
-                    <td> <a href="{{ path('admin_property_update', {'id': p.id}) }} "> Update </a> </td>
+                    <td> 
+                        <a href="{{ path('admin_property_update', {'id': p.id}) }} " class="btn btn-success d-inline-block"> Update </a> 
+                        <form method="POST" class="d-inline-block" action = "{{ path('admin_property_delete', {'id': p.id}) }} ">
+                            <input type="hidden" name="_method" value = "DELETE">
+                            <input type="hidden" name="_token" value = {{ csrf_token('delete' ~ p.id) }}>
+                            <button class="btn btn-danger">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <div class="text-right">
+        <a href=" {{ path('admin_property_add') }}" class="btn btn-secondary"> Add Property </a>
+        
+    </div>
 </div>
 {% endblock %}
