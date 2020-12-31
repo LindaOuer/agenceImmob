@@ -4,10 +4,12 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
+ * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class User implements UserInterface
 {
@@ -35,9 +37,9 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", unique=true, nullable=true)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
-    private $apiToken;
+    private $ActivationToken;
 
     public function getId(): ?int
     {
@@ -117,14 +119,14 @@ class User implements UserInterface
         // $this->plainPassword = null;
     }
 
-    public function getApiToken(): ?string
+    public function getActivationToken(): ?string
     {
-        return $this->apiToken;
+        return $this->ActivationToken;
     }
 
-    public function setApiToken(string $apiToken): self
+    public function setActivationToken(?string $ActivationToken): self
     {
-        $this->apiToken = $apiToken;
+        $this->ActivationToken = $ActivationToken;
 
         return $this;
     }
