@@ -5,5 +5,74 @@
 {% block body %}
 <div class="container">
     <h1>All available properties</h1>
+    <div class="container">
+        <h2>Latest Properties</h2>
+        <div class="row">
+            {% for p in properties %}
+                <div class="col-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <a href="{{ path('property_show', {id: p.id, slug: p.slug}) }} ">{{ p.title }} </a>
+                            </h5>
+                            <p class="card-text"> {{p.city }} - {{ p.postalcode }} </p>
+                            <div class="text-dark">
+                                <h4>Price </h4> <span class="text-muted">{{ p.price | number_format(0, '.', ' ')}} </span>
+                            </div>
+                            <a href="{{ path('property_like', {'id': p.id}) }}" class="btn btn-link js-like">
+                                {% if app.user and p.isLikedByUser(app.user) %}
+                                    <i class="fas fa-thumbs-up"></i> 
+                                {% else %}
+                                    <i class="far fa-thumbs-up"></i> 
+                                {% endif %}
+                                
+                                <span class="js-likes">{{ p.propertyLikes | length }}</span>
+                                <span class="js-label">I like</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+
+        function onClickBtnLike(event) {
+            event.preventDefault();
+
+            const url = this.href;
+            const spanCount = this.querySelector('span.js-likes');
+            const icon = this.querySelector('i');
+
+            axios.get(url).then(function(response) {
+                const likes = response.data.likes;
+                
+                spanCount.textContent = likes;
+
+                if (icon.classList.contains('fas')) {
+                    icon.classList.replace('fas', 'far')
+                }
+                else {
+                    icon.classList.replace('far', 'fas')
+                }
+                
+            }).catch(function (error) {
+                if (error.response.status === 403) {
+                    window.alert('You must be logged in ')
+                }
+                else {
+                    window.alert('Sorry there was an error')
+                }
+            })
+        }
+
+        document.querySelectorAll('a.js-like').forEach(function (link) {
+            link.addEventListener('click', onClickBtnLike);
+        })
+    </script>
 {% endblock %}

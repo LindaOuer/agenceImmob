@@ -17,7 +17,7 @@
                             </h5>
                             <p class="card-text"> {{p.city }} - {{ p.postalcode }} </p>
                             <div class="text-dark">
-                                {{ p.price | number_format(0, '.', ' ')}}
+                                <h4>Price </h4> <span class="text-muted">{{ p.price | number_format(0, '.', ' ')}} </span>
                             </div>
                         </div>
                     </div>

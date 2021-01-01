@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\PropertyRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Cocur\Slugify\Slugify;
 
@@ -19,6 +21,7 @@ class Property
     public function __construct ()
     {
         $this->created_at = new \DateTime();
+        $this->propertyLikes = new ArrayCollection();
     }
 
     /**
@@ -92,6 +95,11 @@ class Property
      * @ORM\Column(type="datetime")
      */
     private $created_at;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PropertyLike::class, mappedBy="Property")
+     */
+    private $propertyLikes;
 
     public function getId(): ?int
     {
@@ -262,5 +270,51 @@ class Property
         $this->created_at = $created_at;
 
         return $this;
+    }
+
+    /**
+     * @return Collection|PropertyLike[]
+     */
+    public function getPropertyLikes(): Collection
+    {
+        return $this->propertyLikes;
+    }
+
+    public function addPropertyLike(PropertyLike $propertyLike): self
+    {
+        if (!$this->propertyLikes->contains($propertyLike)) {
+            $this->propertyLikes[] = $propertyLike;
+            $propertyLike->setProperty($this);
+        }
+
+        return $this;
+    }
+
+    public function removePropertyLike(PropertyLike $propertyLike): self
+    {
+        if ($this->propertyLikes->removeElement($propertyLike)) {
+            // set the owning side to null (unless already changed)
+            if ($propertyLike->getProperty() === $this) {
+                $propertyLike->setProperty(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * returns true is a given user liked this property
+     *
+     * @param User $user
+     * @return boolean
+     */
+    public function isLikedByUser(User $user): bool
+    {
+        foreach ($this->propertyLikes as $like) {
+            if ($like->getUser() === $user) {
+                return true;
+            }
+        }
+        return false;
     }
 }
